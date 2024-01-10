@@ -5,6 +5,7 @@ Real-time webchat application. The following technologies are used in the develo
 - [Next.js](https://nextjs.org/) for frontend and server-side rendering
 - tRPC for efficient, strongly typed API calls
 - MongoDB as a NoSQL database for storing chat logs
+- Google as authentication provider
 
 ## Getting Started
 
@@ -22,7 +23,7 @@ GOOGLE_CLIENT_SECRET=google-client-secret
 
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_URL_INTERNAL=http://localhost:3000
-NEXTAUTH_SECRET=something-secret-here-used-to-sign-session-tokens
+NEXTAUTH_SECRET=<use openssl to generate strong random string>
 ```
 
 #### Run the development server

@@ -11,5 +11,5 @@ export default async function Home() {
 
   // const db = await getDB();
   // console.log(db);
-  return <MainScreen />;
+  return <MainScreen user={session.user} />;
 }
