@@ -1,12 +1,13 @@
-import mongoose, { ConnectionStates } from 'mongoose';
+import mongoose from 'mongoose';
 
-let isConnected = false;
+let mongo: typeof mongoose | null = null;
 
-async function connectDB() {
-  if (isConnected) return;
-  const db = await mongoose.connect(process.env.MONGODB_URI!);
-  isConnected = db.connections[0].readyState === ConnectionStates.connected;
-  console.log(`isConnected ${isConnected}`);
+export default async function getDB() {
+  if (mongo) return Promise.resolve(mongo);
+  if (!process.env.MONGODB_URI) {
+    throw new Error('env var MONGODB_URI is required');
+  }
+  const db = await mongoose.connect(process.env.MONGODB_URI);
+  mongo = db;
+  return mongo;
 }
-
-export default connectDB;

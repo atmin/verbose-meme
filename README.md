@@ -11,10 +11,18 @@ Real-time webchat application. The following technologies are used in the develo
 #### Prerequisites
 
 - free MongoDB Atlas account
+- [Google OAuth 2.0 Client ID](https://console.cloud.google.com/apis/credentials)
 - `.env.local` file with following contents:
 ```bash
-MONGODB_URI=your-mongodb-connection-string
-MONGODB_DB=your-database-name
+MONGODB_URI=mongodb-connection-string
+MONGODB_DB=database-name
+
+GOOGLE_CLIENT_ID=google-client-id
+GOOGLE_CLIENT_SECRET=google-client-secret
+
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL_INTERNAL=http://localhost:3000
+NEXTAUTH_SECRET=something-secret-here-used-to-sign-session-tokens
 ```
 
 #### Run the development server
