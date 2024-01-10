@@ -1,4 +1,8 @@
-export default function Home() {
+import getDB from '@/lib/db'
+
+export default async function Home() {
+  const db = await getDB();
+  console.log(db)
   return (
     <main className="container mx-auto h-svh flex flex-col">
       <div className="px-5 py-5 flex justify-between items-center bg-white border-b-2">
@@ -8,7 +12,7 @@ export default function Home() {
             type="text"
             name=""
             id=""
-            placeholder="Filter messages"
+            placeholder="Search messages"
             className="rounded-2xl bg-gray-100 py-3 px-5 w-full"
           />
         </div>
