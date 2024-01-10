@@ -1,8 +1,23 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Verbose meme
+
+Real-time webchat application. The following technologies are used in the development process:
+
+- [Next.js](https://nextjs.org/) for frontend and server-side rendering
+- tRPC for efficient, strongly typed API calls
+- MongoDB as a NoSQL database for storing chat logs
 
 ## Getting Started
 
-First, run the development server:
+#### Prerequisites
+
+- free MongoDB Atlas account
+- `.env.local` file with following contents:
+```bash
+MONGODB_URI=your-mongodb-connection-string
+MONGODB_DB=your-database-name
+```
+
+#### Run the development server
 
 ```bash
 npm run dev
@@ -16,11 +31,7 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
+#### Learn More
 
 To learn more about Next.js, take a look at the following resources:
 
@@ -29,7 +40,7 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+#### Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
