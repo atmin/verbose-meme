@@ -16,7 +16,7 @@ export default function ChatMessage({
       <div
         className={[
           'flex',
-          'mb-1',
+          'mb-2',
           isAuthor ? 'justify-end' : 'justify-start',
         ].join(' ')}
       >
@@ -29,11 +29,6 @@ export default function ChatMessage({
           isAuthor ? 'justify-end' : 'justify-start',
         ].join(' ')}
       >
-        {/* {!isAuthor && (
-          <div className="mr-2 flex-shrink-0">
-            <UserName user={author} />
-          </div>
-        )} */}
         <div>
           {messages.map((message, i) => (
             <div
@@ -43,7 +38,7 @@ export default function ChatMessage({
                 'py-3 px-4',
                 isAuthor ? 'bg-blue-400' : 'bg-gray-400',
                 'rounded-3xl',
-                // isAuthor ? 'rounded-tr-none' : 'rounded-tl-none',
+                isAuthor ? 'rounded-tr-none' : 'rounded-tl-none',
                 'text-white',
               ].join(' ')}
             >
@@ -51,11 +46,6 @@ export default function ChatMessage({
             </div>
           ))}
         </div>
-        {/* {isAuthor && (
-          <div className="ml-2 flex-shrink-0">
-            <UserName user={author} />
-          </div>
-        )} */}
       </div>
     </div>
   );
