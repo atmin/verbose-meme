@@ -1,6 +1,5 @@
 import { Server } from 'socket.io';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { decode } from 'next-auth/jwt';
 import getDb from '@/lib/db';
 import type { ChatMessage } from '@/lib/types';
 
@@ -11,16 +10,20 @@ export default async function handler(req: any, res: any) {
     res.socket.server.io = io;
 
     io.on('connection', async (socket) => {
-      const session = await getServerSession(req, res, authOptions);
-      const { user } = session!;
-      console.log(`${user?.name} connected`);
+      const { cookie } = socket.handshake.headers;
+      const sessionToken = cookie?.match(/next-auth.session-token=([^;]*)/);
+      const jwt = await decode({
+        token: sessionToken![1],
+        secret: process.env.NEXTAUTH_SECRET!,
+      });
+      console.log(`${jwt?.name} connected`);
 
       const db = await getDb();
 
       socket.on('chatMessage', (msg: string) => {
         // Save to DB
         const chatMessage: Omit<ChatMessage, '_id'> = {
-          author: user,
+          author: { name: jwt?.name, email: jwt?.email, image: jwt?.picture },
           message: msg,
         };
 
@@ -35,7 +38,7 @@ export default async function handler(req: any, res: any) {
       });
 
       socket.on('disconnect', () => {
-        console.log(`${user?.name} disconnected`);
+        console.log(`${jwt?.name} disconnected`);
       });
     });
   }
