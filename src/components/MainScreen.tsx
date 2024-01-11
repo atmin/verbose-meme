@@ -2,31 +2,36 @@
 
 import { useState, useEffect, useRef } from 'react';
 import io, { Socket } from 'socket.io-client';
-import { DefaultSession } from 'next-auth';
+import type { User, ChatMessage as TChatMessage } from '@/lib/types';
 import UserName from './UserName';
 import ChatMessage from './ChatMessage';
 
-export default function MainScreen({ user }: { user: DefaultSession['user'] }) {
+export default function MainScreen({ user }: { user: User }) {
   const initialized = useRef(false);
+  const [socket, setSocket] = useState<Socket>();
+  const [messages, setMessages] = useState<TChatMessage[]>([]);
 
   useEffect(function initSocket() {
-    // In strict mode this effect is called twice
+    // In strict mode this effect is called twice in dev mode
     if (initialized.current) return;
-
     initialized.current = true;
 
-    let socket: Socket;
+    Promise.all([
+      fetch('/api/messages')
+        .then((resp) => resp.json())
+        .then(setMessages),
 
-    fetch('/api/socket').then(() => {
-      socket = io();
+      fetch('/api/socket'),
+    ]).then(() => {
+      const socket = io();
+      setSocket(socket);
 
       socket.on('connect', () => {
-        console.log('connected');
-        socket.emit('chatMessage', 'this is a message');
+        console.log('socket connected');
       });
 
-      socket.on('chatMessage', (msg: string) => {
-        console.log(`chat message: ${msg}`);
+      socket.on('chatMessage', (msg: TChatMessage) => {
+        setMessages(oldMessages => [...oldMessages, msg]);
       });
     });
   }, []);
@@ -49,39 +54,14 @@ export default function MainScreen({ user }: { user: DefaultSession['user'] }) {
       <div className="flex flex-row flex-grow justify-between">
         <div className="w-full flex flex-col justify-between">
           <div className="flex flex-col mt-5">
-            <ChatMessage
-              messages={['Welcome to group everyone !']}
-              user={user}
-              author={user}
-            />
-            <ChatMessage
-              messages={[
-                'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat at praesentium, aut ullam delectus odio error sit rem. Architecto nulla doloribus laborum illo rem enim dolor odio saepe, consequatur quas?',
-              ]}
-              user={user}
-              author={{
-                email: '@@@',
-                name: 'Someone',
-                image: 'https://placekitten.com/32/32',
-              }}
-            />
-            <ChatMessage
-              messages={[
-                'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magnam, repudiandae.',
-                'Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, reiciendis!',
-              ]}
-              user={user}
-              author={user}
-            />
-            <ChatMessage
-              messages={['something not too long']}
-              user={user}
-              author={{
-                email: '@@@',
-                name: 'Someone Else',
-                image: 'https://placekitten.com/32/32',
-              }}
-            />
+            {messages.map((message) => (
+              <ChatMessage
+                key={message._id}
+                messages={[message.message]}
+                user={user}
+                author={message.author}
+              />
+            ))}
           </div>
 
           <div className="py-5">
@@ -89,6 +69,12 @@ export default function MainScreen({ user }: { user: DefaultSession['user'] }) {
               className="w-full py-5 px-3 rounded-xl border"
               type="text"
               placeholder="type your message here..."
+              onKeyDown={({ currentTarget, key }) => {
+                if (key === 'Enter') {
+                  socket?.emit('chatMessage', currentTarget.value);
+                  currentTarget.value = '';
+                }
+              }}
             />
           </div>
         </div>
