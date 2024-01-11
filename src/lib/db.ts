@@ -11,9 +11,9 @@ export default async function getDb(): Promise<Db> {
   }
   if (!_db) {
     const client = new MongoClient(process.env.MONGODB_URI);
-    const conn = await client.connect();
+    await client.connect();
     const db = client.db(process.env.MONGODB_DB);
     _db = db;
   }
-  return _db;
+  return Promise.resolve(_db);
 }
