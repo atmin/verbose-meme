@@ -11,6 +11,8 @@ export default function MainScreen({ user }: { user: User }) {
   const [socket, setSocket] = useState<Socket>();
   const [messages, setMessages] = useState<TChatMessage[]>([]);
 
+  const anchorRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(function initSocket() {
     // In strict mode this effect is called twice in dev mode
     if (initialized.current) return;
@@ -31,10 +33,14 @@ export default function MainScreen({ user }: { user: User }) {
       });
 
       socket.on('chatMessage', (msg: TChatMessage) => {
-        setMessages(oldMessages => [...oldMessages, msg]);
+        setMessages((oldMessages) => [...oldMessages, msg]);
       });
     });
   }, []);
+
+  useEffect(() => {
+    anchorRef.current?.scrollIntoView();
+  }, [anchorRef, messages]);
 
   return (
     <main className="container mx-auto h-svh flex flex-col">
@@ -45,13 +51,13 @@ export default function MainScreen({ user }: { user: User }) {
             type="text"
             name=""
             id=""
-            placeholder="Search messages"
+            placeholder="Search messages (not implemented)"
             className="rounded-2xl py-3 px-5 w-full border"
           />
         </div>
         <UserName user={user} showLogout className="ml-4" />
       </div>
-      <div className="flex flex-row flex-grow justify-between">
+      <div className="flex flex-row flex-grow justify-between overflow-auto">
         <div className="w-full flex flex-col justify-between">
           <div className="flex flex-col mt-5">
             {messages.map((message) => (
@@ -62,22 +68,22 @@ export default function MainScreen({ user }: { user: User }) {
                 author={message.author}
               />
             ))}
-          </div>
-
-          <div className="py-5">
-            <input
-              className="w-full py-5 px-3 rounded-xl border"
-              type="text"
-              placeholder="type your message here..."
-              onKeyDown={({ currentTarget, key }) => {
-                if (key === 'Enter') {
-                  socket?.emit('chatMessage', currentTarget.value);
-                  currentTarget.value = '';
-                }
-              }}
-            />
+            <div ref={anchorRef} />
           </div>
         </div>
+      </div>
+      <div className="py-5">
+        <input
+          className="w-full py-5 px-3 rounded-xl border"
+          type="text"
+          placeholder="type your message here..."
+          onKeyDown={({ currentTarget, key }) => {
+            if (key === 'Enter') {
+              socket?.emit('chatMessage', currentTarget.value);
+              currentTarget.value = '';
+            }
+          }}
+        />
       </div>
     </main>
   );
