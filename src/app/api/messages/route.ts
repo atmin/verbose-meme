@@ -7,4 +7,6 @@ export async function GET(request: NextRequest) {
   return new Response(JSON.stringify(result));
 }
 
-export async function POST(request: NextRequest) {}
+export async function POST(request: NextRequest) {
+    
+}

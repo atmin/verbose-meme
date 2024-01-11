@@ -1,10 +1,36 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
+import io, { Socket } from 'socket.io-client';
 import { DefaultSession } from 'next-auth';
 import UserName from './UserName';
 import ChatMessage from './ChatMessage';
 
 export default function MainScreen({ user }: { user: DefaultSession['user'] }) {
+  const initialized = useRef(false);
+
+  useEffect(function initSocket() {
+    // In strict mode this effect is called twice
+    if (initialized.current) return;
+
+    initialized.current = true;
+
+    let socket: Socket;
+
+    fetch('/api/socket').then(() => {
+      socket = io();
+
+      socket.on('connect', () => {
+        console.log('connected');
+        socket.emit('chatMessage', 'this is a message');
+      });
+
+      socket.on('chatMessage', (msg: string) => {
+        console.log(`chat message: ${msg}`);
+      });
+    });
+  }, []);
+
   return (
     <main className="container mx-auto h-svh flex flex-col">
       <div className="px-5 py-5 flex justify-between items-center border-b-2">
